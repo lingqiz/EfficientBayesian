@@ -1,5 +1,5 @@
 function neglogLlhd = dataLlhd(priorScale, intNoise, target, response)
-
+%DATALLHD Log likelihood of dataset in the format of target-response pairs
 estimator = BayesianEstimator(priorScale, intNoise);
 estimator.computeEstimator();
 

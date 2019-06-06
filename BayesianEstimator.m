@@ -35,7 +35,7 @@ classdef BayesianEstimator < handle
             this.intNoise = intNoise;
         end
         
-        function computeEstimator(this)
+        function this = computeEstimator(this)
             % Compute the estimator mapping theta_hat(measurement) for the entire domain
             % Should recalculate after changing the prior or the noise parameter
             priorDnst = this.prior(this.stmSpc);
@@ -123,6 +123,7 @@ classdef BayesianEstimator < handle
     methods (Access = private)                
         
         function [estLB, estUB] = intervalEstimate(~, support, probDnst, theta, ci)
+            % Helper function for plotting the distribution of estimates
             if(theta < 0.5 * pi)
                 support(support > pi) = support(support > pi) - 2 * pi;
             elseif(theta > 1.5 * pi)
