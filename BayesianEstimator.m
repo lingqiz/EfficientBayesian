@@ -4,11 +4,11 @@ classdef BayesianEstimator < handle
     properties (Access = public)
         prior;     % Prior distribution p(theta)
         intNoise;  % Size of internal noise (kappa)
-    end
-    
-    properties (Access = private)
         stmSpc;    % Stimulus space [0, 2 * pi]
         snsSpc;    % Sensory space [0, 2 * pi]
+    end
+    
+    properties (Access = private)        
         stepSize;  % Increments for discretization
         
         mapping;   % Mapping from stimulus space to sensory space
