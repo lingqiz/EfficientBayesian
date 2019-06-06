@@ -48,22 +48,7 @@ classdef BayesianEstimator < handle
             for idx = 1:length(this.snsSpc)
                 this.estimates(idx) = this.thetaEstimator(this.snsSpc(idx))
             end
-        end
-
-        function estimate = thetaEstimator(this, snsMsmt)
-        % Calculate theta_hat given the sensory measurement            
-            likelihood = vonmpdf(this.snsSpc, snsMsmt, this.intNoise);
-            score = likelihood .* this.ivsPrior;
-
-            stmScore = interp1(this.ivsStmSpc, score, this.stmSpc, 'linear', 'extrap');
-
-            % L2 loss, posterior mean
-            posteriorDist = stmScore / trapz(this.stmSpc, stmScore);
-            posteriorMass = posteriorDist * this.stepSize;
-            
-            % Calculate circular mean with helper function
-            estimate = circularMean(this.stmSpc, posteriorMass)            
-        end
+        end        
 
         function [domain, probDnst] = estimatePDF(this, theta)
         % Return the distribution of estimate p(theta_hat | theta)
@@ -99,8 +84,27 @@ classdef BayesianEstimator < handle
             biasLB = (estimates(2, :) - thetas) / (2 * pi) * 180;
             biasUB = (estimates(3, :) - thetas) / (2 * pi) * 180;
             thetas = thetas / (2 * pi) * 180;
+        end                
+
+    end
+
+    methods (Access = private)
+
+        function estimate = thetaEstimator(this, snsMsmt)
+            % Calculate theta_hat given the sensory measurement            
+            likelihood = vonmpdf(this.snsSpc, snsMsmt, this.intNoise);
+            score = likelihood .* this.ivsPrior;
+
+            stmScore = interp1(this.ivsStmSpc, score, this.stmSpc, 'linear', 'extrap');
+
+            % L2 loss, posterior mean
+            posteriorDist = stmScore / trapz(this.stmSpc, stmScore);
+            posteriorMass = posteriorDist * this.stepSize;
+            
+            % Calculate circular mean with helper function
+            estimate = circularMean(this.stmSpc, posteriorMass)            
         end
-        
+
         function [estLB, estUB] = intervalEstimate(this, support, probDnst, theta, ci)
             if(theta < 0.5 * pi)
                 support(support > pi) = support(support > pi) - 2 * pi;
