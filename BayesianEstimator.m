@@ -50,6 +50,21 @@ classdef BayesianEstimator < handle
             end
         end
         
+        function estimate = thetaEstimator(this, snsMsmt)
+            % Calculate theta_hat given the sensory measurement
+            likelihood = vonmpdf(this.snsSpc, snsMsmt, this.intNoise);
+            score = likelihood .* this.ivsPrior;
+            
+            stmScore = interp1(this.ivsStmSpc, score, this.stmSpc, 'linear', 'extrap');
+            
+            % L2 loss, posterior mean
+            posteriorDist = stmScore / trapz(this.stmSpc, stmScore);
+            posteriorMass = posteriorDist * this.stepSize;
+            
+            % Calculate circular mean with helper function
+            estimate = circularMean(this.stmSpc, posteriorMass);
+        end
+        
         function [domain, probDnst] = estimatePDF(this, theta)
             % Return the distribution of estimate p(theta_hat | theta)
             
@@ -63,8 +78,9 @@ classdef BayesianEstimator < handle
             domain = this.stmSpc;
             probDnst = interp1(this.estimates, probDnst, domain, 'linear', 'extrap');
         end
-        
+                
         function [thetas, bias, biasLB, biasUB] = visualization(this, varargin)
+            % Visualize the bias and distribution of estimates pattern
             p = inputParser;
             p.addParameter('StepSize', 0.05, @(x)(isnumeric(x) && numel(x) == 1));
             p.addParameter('Interval', 0.68, @(x)(isnumeric(x) && numel(x) == 1));
@@ -104,22 +120,7 @@ classdef BayesianEstimator < handle
         
     end
     
-    methods (Access = private)
-        
-        function estimate = thetaEstimator(this, snsMsmt)
-            % Calculate theta_hat given the sensory measurement
-            likelihood = vonmpdf(this.snsSpc, snsMsmt, this.intNoise);
-            score = likelihood .* this.ivsPrior;
-            
-            stmScore = interp1(this.ivsStmSpc, score, this.stmSpc, 'linear', 'extrap');
-            
-            % L2 loss, posterior mean
-            posteriorDist = stmScore / trapz(this.stmSpc, stmScore);
-            posteriorMass = posteriorDist * this.stepSize;
-            
-            % Calculate circular mean with helper function
-            estimate = circularMean(this.stmSpc, posteriorMass);
-        end
+    methods (Access = private)                
         
         function [estLB, estUB] = intervalEstimate(~, support, probDnst, theta, ci)
             if(theta < 0.5 * pi)
