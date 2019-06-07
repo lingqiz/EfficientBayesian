@@ -104,8 +104,9 @@ classdef BayesianEstimator < handle
                 end
             else
                 for idx = 1:length(thetas)
-                    [ests, prob] = this.estimatePDF(thetas(idx));
+                    [ests, prob] = this.estimatePDF(thetas(idx));                    
                     estimate(idx) = circularMean(ests, prob * this.stepSize);
+                    assert(trapz(ests, prob) > 0.95);                    
                     
                     [estimateLB(idx), estimateUB(idx)] = ...
                         this.intervalEstimate(ests, prob, thetas(idx), ci);

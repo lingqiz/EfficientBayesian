@@ -1,6 +1,10 @@
 function [para, fval] = optWrapper(init, target, response, varargin)
 %OPTWRAPPER Wrapper function for running the fitting procedure.
 
+% Reformat the data
+target = target / 180 * (2 * pi);
+response = response / 180 * (2 * pi);
+
 p = inputParser;
 p.addParameter('Optimizer', 'fminsearch', @(x) isa(x, 'char'));
 p.addParameter('Display', 'iter', @(x) isa(x, 'char'))
