@@ -19,7 +19,6 @@ if (strcmp(optFunc, 'fminsearch'))
     opts.Display = display;
     opts.TolX = 1e-2;
     opts.TolFun = 1e-2;
-    
     [para, fval] = fminsearchbnd(objFunc, init, lb, ub, opts);
     
 elseif (strcmp(optFunc, 'bads'))
@@ -34,7 +33,6 @@ elseif (strcmp(optFunc, 'fmincon'))
     opts.Display = display;
     opts.TolX = 1e-4;
     opts.TolFun = 1e-4;
-    
     [para, fval] = fmincon(objFunc, init, [], [], [], [], lb, ub, [], opts);
     
 else
