@@ -103,8 +103,7 @@ classdef BayesianEstimator < handle
             parse(p, varargin{:});
             
             [thetas, bias, densityGrid] = computeGrid(this, 'StepSize', p.Results.StepSize);
-            
-            figure();
+                        
             thetas = this.convertAxis(thetas);
             bias = this.convertAxis(bias);
             
