@@ -64,3 +64,14 @@ estimator = BayesianEstimator(1.0, 1);
 estimator.computeEstimator();
 
 estimator.visualizeGrid('StepSize', 0.05);
+
+%% Test for fitting the data
+figure(); subplot(1, 2, 1);
+estimator = BayesianEstimator(0.5, 6);
+estimator.computeEstimator();
+estimator.visualizeGrid('Clim', [0, 1.6]);
+
+subplot(1, 2, 2);
+estimator = BayesianEstimator(1.5, 6);
+estimator.computeEstimator();
+estimator.visualizeGrid('Clim', [0, 1.6]);

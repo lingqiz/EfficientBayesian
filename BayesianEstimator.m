@@ -97,9 +97,10 @@ classdef BayesianEstimator < handle
             end
         end
         
-        function visualizeGrid(this, varargin)
+        function [thetas, bias, densityGrid] = visualizeGrid(this, varargin)
             p = inputParser;
             p.addParameter('StepSize', 0.05, @(x)(isnumeric(x) && numel(x) == 1));
+            p.addParameter('Clim', [], @(x)(length(x) == 2));
             parse(p, varargin{:});
             
             [thetas, bias, densityGrid] = computeGrid(this, 'StepSize', p.Results.StepSize);
@@ -107,7 +108,11 @@ classdef BayesianEstimator < handle
             thetas = this.convertAxis(thetas);
             bias = this.convertAxis(bias);
             
-            imagesc(thetas, bias, densityGrid);
+            if isempty(p.Results.Clim)
+                imagesc(thetas, bias, densityGrid);
+            else
+                imagesc(thetas, bias, densityGrid, p.Results.Clim);
+            end            
             xlim([0, 180]);  xticks(0 : 36 : 180);
             ylim([-90, 90]); yticks(-90 : 36 : 90);
             xlabel('Orientation'); ylabel('Degree');
