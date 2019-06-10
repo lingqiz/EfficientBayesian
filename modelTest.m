@@ -52,14 +52,14 @@ xlabel('Orientation (deg)'); ylabel('Bias (deg)');
 
 %% Full distribution pattern, density plot
 % Use different parameters
-figure(1);
+figure();
 estimator = BayesianEstimator(1.0, 2);
 estimator.computeEstimator();
 
 estimator.visualizeGrid('StepSize', 0.05);
 
 % Use different parameters
-figure(2);
+figure();
 estimator = BayesianEstimator(1.0, 1);
 estimator.computeEstimator();
 

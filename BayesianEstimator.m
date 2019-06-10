@@ -115,7 +115,7 @@ classdef BayesianEstimator < handle
             end            
             xlim([0, 180]);  xticks(0 : 36 : 180);
             ylim([-90, 90]); yticks(-90 : 36 : 90);
-            xlabel('Orientation'); ylabel('Degree');
+            xlabel('Orientation'); ylabel('Bias');
         end
         
         function [thetas, estimate, biasLB, biasUB] = visualization(this, varargin)
