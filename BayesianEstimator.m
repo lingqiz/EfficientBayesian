@@ -66,8 +66,7 @@ classdef BayesianEstimator < handle
         end
         
         function [domain, probDnst] = estimatePDF(this, theta)
-            % Return the distribution of estimate p(theta_hat | theta)
-            
+            % Return the distribution of estimate p(theta_hat | theta)            
             % Measurement distribution
             thetaTilde = interp1(this.stmSpc, this.mapping, theta, 'linear', 'extrap');
             msmtDist = vonmpdf(this.snsSpc, thetaTilde, this.intNoise);
@@ -76,7 +75,7 @@ classdef BayesianEstimator < handle
             probDnst = abs(gradient(this.snsSpc, this.estimates)) .* msmtDist;
             
             domain = this.stmSpc; validIdx = 3:(length(probDnst)-2);
-            probDnst = interp1(this.estimates(validIdx), probDnst(validIdx), domain, 'linear', 'extrap');            
+            probDnst = interp1(this.estimates(validIdx), probDnst(validIdx), domain, 'linear', 'extrap');
         end
         
         function [thetas, bias, densityGrid] = computeGrid(this, varargin)
@@ -109,8 +108,9 @@ classdef BayesianEstimator < handle
             bias = this.convertAxis(bias);
             
             imagesc(thetas, bias, densityGrid);
-            xlim([min(thetas), max(thetas)]);
-            ylim([min(bias), max(bias)]);
+            xlim([0, 180]);  xticks(0 : 36 : 180);
+            ylim([-90, 90]); yticks(-90 : 36 : 90);
+            xlabel('Orientation'); ylabel('Degree');
         end
         
         function [thetas, bias, biasLB, biasUB] = visualization(this, varargin)
