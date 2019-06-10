@@ -100,6 +100,7 @@ classdef BayesianEstimator < handle
         function [thetas, bias, densityGrid] = visualizeGrid(this, varargin)
             p = inputParser;
             p.addParameter('StepSize', 0.05, @(x)(isnumeric(x) && numel(x) == 1));
+            p.addParameter('ShowPlot', true, @(x) islogical(x));
             parse(p, varargin{:});
             
             [thetas, bias, densityGrid] = computeGrid(this, 'StepSize', p.Results.StepSize);
@@ -108,9 +109,11 @@ classdef BayesianEstimator < handle
             bias = this.convertAxis(bias);
             [X, Y] = meshgrid(thetas, bias);
             
-            surf(X, Y, densityGrid); view([0, 90]);
-            xlim([0, 180]); ylim([-90, 90]);
-            xlabel('Orientation'); ylabel('Bias');
+            if p.Results.ShowPlot
+                surf(X, Y, densityGrid); view([0, 90]);
+                xlim([0, 180]); ylim([-90, 90]);
+                xlabel('Orientation'); ylabel('Bias');
+            end
         end
         
         function [thetas, estimate, biasLB, biasUB] = visualization(this, varargin)

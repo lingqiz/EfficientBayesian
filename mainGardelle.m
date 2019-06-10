@@ -25,6 +25,17 @@ end
 %% Fit combined data
 fitData(dataMtx);
 
+%% Visualization
+estimator = BayesianEstimator(1.5, 1.0);
+estimator.computeEstimator();
+
+figure(); hold on;
+[thetas, bias, densityGrid] = estimator.visualizeGrid('ShowPlot', false);
+imagesc(thetas, bias, densityGrid);
+scatter(dataMtx(:, 2), dataMtx(:, 3), 0.25);
+xlim([0, 180]); ylim([-90, 90]);
+title('Bias');
+
 %% Fit seperate condition
 targetCond = [20, 40, 80, 160, 1000];
 for idx = 1:length(targetCond)    
