@@ -66,7 +66,7 @@ classdef BayesianEstimator < handle
         end
         
         function [domain, probDnst] = estimatePDF(this, theta)
-            % Return the distribution of estimate p(theta_hat | theta)            
+            % Return the distribution of estimate p(theta_hat | theta)
             % Measurement distribution
             thetaTilde = interp1(this.stmSpc, this.mapping, theta, 'linear', 'extrap');
             msmtDist = vonmpdf(this.snsSpc, thetaTilde, this.intNoise);
@@ -79,6 +79,7 @@ classdef BayesianEstimator < handle
         end
         
         function [thetas, bias, densityGrid] = computeGrid(this, varargin)
+            % Compute a grid representation of orientation - bias PDF
             p = inputParser;
             p.addParameter('StepSize', 0.05, @(x)(isnumeric(x) && numel(x) == 1));
             parse(p, varargin{:});
@@ -113,57 +114,43 @@ classdef BayesianEstimator < handle
             xlabel('Orientation'); ylabel('Degree');
         end
         
-        function [thetas, bias, biasLB, biasUB] = visualization(this, varargin)
+        function [thetas, estimate, biasLB, biasUB] = visualization(this, varargin)
             % Visualize the bias and distribution of estimates pattern
             p = inputParser;
+            p.addParameter('StepSize', 0.05, @(x)(isnumeric(x) && numel(x) == 1));
             p.addParameter('Interval', 0.68, @(x)(isnumeric(x) && numel(x) == 1));
             parse(p, varargin{:});
+            delta = p.Results.StepSize;
             
-            init = 0.01; ci = p.Results.Interval;
-            thetas = init : p.Results.StepSize : 2 * pi;
+            [thetas, bias, densityGrid] = this.computeGrid('StepSize', delta);
             
-            estimate   = zeros(1, length(thetas));
-            estimateLB = zeros(1, length(thetas));
-            estimateUB = zeros(1, length(thetas));
+            estimate = zeros(1, length(thetas));
+            biasLB = zeros(1, length(thetas));
+            biasUB = zeros(1, length(thetas));
             
             for idx = 1:length(thetas)
-                [ests, prob] = this.estimatePDF(thetas(idx));
-                estimate(idx) = circularMean(ests, prob * this.stepSize);
-                assert(trapz(ests, prob) > 0.95);
-                
-                [estimateLB(idx), estimateUB(idx)] = ...
-                    this.intervalEstimate(ests, prob, thetas(idx), ci);
+                probDnst = densityGrid(:, idx);
+                estimate(idx) = circularMean(wrapTo2Pi(bias), probDnst' * delta);
+                [biasLB(idx), biasUB(idx)] = ...
+                    this.intervalEstimate(bias, probDnst, p.Results.Interval);
             end
             
-            
-            bias   = (estimate - thetas) / (2 * pi) * 180;
-            biasLB = (estimateLB - thetas) / (2 * pi) * 180;
-            biasUB = (estimateUB - thetas) / (2 * pi) * 180;
-            thetas = thetas / (2 * pi) * 180;
+            thetas = this.convertAxis(thetas); estimate = this.convertAxis(wrapToPi(estimate));
+            biasLB = this.convertAxis(biasLB); biasUB = this.convertAxis(biasUB);
         end
         
     end
     
     methods (Access = private)
         
-        function [estLB, estUB] = intervalEstimate(~, support, probDnst, theta, ci)
+        function [estLB, estUB] = intervalEstimate(~, support, probDnst, ci)
             % Helper function for plotting the distribution of estimates
-            if(theta < 0.5 * pi)
-                support(support > pi) = support(support > pi) - 2 * pi;
-            elseif(theta > 1.5 * pi)
-                support(support < pi) = support(support < pi) + 2 * pi;
-            end
-            [support, sortIdx] = sort(support);
-            probDnst = probDnst(sortIdx);
-            support  = support(probDnst > 0);
-            probDnst = probDnst(probDnst > 0);
-            
             [cdf, uIdx] = unique(cumtrapz(support, probDnst), 'stable');
             quantileLB = (1 - ci) / 2;
             quantileUB = 1 - quantileLB;
             
-            estLB = interp1(cdf, support(uIdx), quantileLB);
-            estUB = interp1(cdf, support(uIdx), quantileUB);
+            estLB = interp1(cdf, support(uIdx), quantileLB, 'linear', 'extrap');
+            estUB = interp1(cdf, support(uIdx), quantileUB, 'linear', 'extrap');
         end
         
         function support = convertAxis(~, support)

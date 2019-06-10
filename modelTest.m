@@ -45,7 +45,7 @@ subplot(2, 1, 2); grid on;
 estimator = BayesianEstimator(1.0, 1);
 estimator.computeEstimator();
 
-[theta, bias, lb, ub] = estimator.visualization('Interval', 0.95);
+[theta, bias, lb, ub] = estimator.visualization();
 errorbar(theta, bias, bias - lb, ub - bias, 'LineWidth', 1.0, 'Color', colors(2, :));
 
 xlabel('Orientation (deg)'); ylabel('Bias (deg)');

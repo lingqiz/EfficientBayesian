@@ -22,7 +22,7 @@ else
     estimateSin = sum(postMass .* sin(support));
     estimateCos = sum(postMass .* cos(support));
     estimate = atan(estimateSin / estimateCos);
-    
+
     if (estimateCos < 0)
         estimate = estimate + pi;
     elseif (estimateCos > 0 && estimate < 0)
