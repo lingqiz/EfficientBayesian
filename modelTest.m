@@ -34,7 +34,7 @@ colors = get(gca, 'colororder');
 
 % Use different parameters
 subplot(2, 1, 1); grid on;
-estimator = BayesianEstimator(1.5, 10);
+estimator = BayesianEstimator(1.0, 2.5);
 estimator.computeEstimator();
 
 [theta, bias, lb, ub] = estimator.visualization();
@@ -42,10 +42,23 @@ errorbar(theta, bias, bias - lb, ub - bias, 'LineWidth', 1.0, 'Color', colors(1,
 
 % Use different parameters
 subplot(2, 1, 2); grid on;
-estimator = BayesianEstimator(1.8, 5);
+estimator = BayesianEstimator(1.0, 1);
 estimator.computeEstimator();
 
 [theta, bias, lb, ub] = estimator.visualization('Interval', 0.95);
 errorbar(theta, bias, bias - lb, ub - bias, 'LineWidth', 1.0, 'Color', colors(2, :));
 
 xlabel('Orientation (deg)'); ylabel('Bias (deg)');
+
+%% Full distribution pattern, density plot
+% Use different parameters
+estimator = BayesianEstimator(1.0, 2);
+estimator.computeEstimator();
+
+estimator.visualizeGrid('StepSize', 0.05);
+
+% Use different parameters
+estimator = BayesianEstimator(1.0, 1);
+estimator.computeEstimator();
+
+estimator.visualizeGrid('StepSize', 0.05);

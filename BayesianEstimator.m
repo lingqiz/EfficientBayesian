@@ -8,7 +8,7 @@ classdef BayesianEstimator < handle
         snsSpc;    % Sensory space [0, 2 * pi]
     end
     
-    properties (Access = private)        
+    properties (Access = private)
         stepSize;  % Increments for discretization
         
         mapping;   % Mapping from stimulus space to sensory space
@@ -75,16 +75,48 @@ classdef BayesianEstimator < handle
             % Change of variable from measurement to estimate
             probDnst = abs(gradient(this.snsSpc, this.estimates)) .* msmtDist;
             
-            domain = this.stmSpc;
-            probDnst = interp1(this.estimates, probDnst, domain, 'linear', 'extrap');
+            domain = this.stmSpc; validIdx = 3:(length(probDnst)-2);
+            probDnst = interp1(this.estimates(validIdx), probDnst(validIdx), domain, 'linear', 'extrap');            
         end
+        
+        function [thetas, bias, densityGrid] = computeGrid(this, varargin)
+            p = inputParser;
+            p.addParameter('StepSize', 0.05, @(x)(isnumeric(x) && numel(x) == 1));
+            parse(p, varargin{:});
+            
+            biasLB = -pi; biasUB = pi; bias = biasLB : p.Results.StepSize : biasUB;
+            thetas = 0 : p.Results.StepSize : 2 * pi;
+            
+            densityGrid = zeros(length(bias), length(thetas));
+            for idx = 1:length(thetas)
+                [ests, prob] = this.estimatePDF(thetas(idx));
+                [biasEstimate, sortIdx] = sort(wrapToPi(ests - thetas(idx)));
+                prob = prob(sortIdx);
                 
+                densityGrid(:, idx) = interp1(biasEstimate, prob, bias, 'linear', 'extrap');
+            end
+        end
+        
+        function visualizeGrid(this, varargin)
+            p = inputParser;
+            p.addParameter('StepSize', 0.05, @(x)(isnumeric(x) && numel(x) == 1));
+            parse(p, varargin{:});
+            
+            [thetas, bias, densityGrid] = computeGrid(this, 'StepSize', p.Results.StepSize);
+            
+            figure();
+            thetas = this.convertAxis(thetas);
+            bias = this.convertAxis(bias);
+            
+            imagesc(thetas, bias, densityGrid);
+            xlim([min(thetas), max(thetas)]);
+            ylim([min(bias), max(bias)]);
+        end
+        
         function [thetas, bias, biasLB, biasUB] = visualization(this, varargin)
             % Visualize the bias and distribution of estimates pattern
             p = inputParser;
-            p.addParameter('StepSize', 0.05, @(x)(isnumeric(x) && numel(x) == 1));
             p.addParameter('Interval', 0.68, @(x)(isnumeric(x) && numel(x) == 1));
-            p.addParameter('Parallel', false, @(x) isa(x, 'logical'));
             parse(p, varargin{:});
             
             init = 0.01; ci = p.Results.Interval;
@@ -94,25 +126,16 @@ classdef BayesianEstimator < handle
             estimateLB = zeros(1, length(thetas));
             estimateUB = zeros(1, length(thetas));
             
-            if p.Results.Parallel
-                parfor idx = 1:length(thetas)
-                    [ests, prob] = this.estimatePDF(thetas(idx));
-                    estimate(idx) = circularMean(ests, prob * this.stepSize);
-                    
-                    [estimateLB(idx), estimateUB(idx)] = ...
-                        this.intervalEstimate(ests, prob, thetas(idx), ci);
-                end
-            else
-                for idx = 1:length(thetas)
-                    [ests, prob] = this.estimatePDF(thetas(idx));                    
-                    estimate(idx) = circularMean(ests, prob * this.stepSize);
-                    assert(trapz(ests, prob) > 0.95);                    
-                    
-                    [estimateLB(idx), estimateUB(idx)] = ...
-                        this.intervalEstimate(ests, prob, thetas(idx), ci);
-                end
+            for idx = 1:length(thetas)
+                [ests, prob] = this.estimatePDF(thetas(idx));
+                estimate(idx) = circularMean(ests, prob * this.stepSize);
+                assert(trapz(ests, prob) > 0.95);
+                
+                [estimateLB(idx), estimateUB(idx)] = ...
+                    this.intervalEstimate(ests, prob, thetas(idx), ci);
             end
-                        
+            
+            
             bias   = (estimate - thetas) / (2 * pi) * 180;
             biasLB = (estimateLB - thetas) / (2 * pi) * 180;
             biasUB = (estimateUB - thetas) / (2 * pi) * 180;
@@ -121,7 +144,7 @@ classdef BayesianEstimator < handle
         
     end
     
-    methods (Access = private)                
+    methods (Access = private)
         
         function [estLB, estUB] = intervalEstimate(~, support, probDnst, theta, ci)
             % Helper function for plotting the distribution of estimates
@@ -141,6 +164,10 @@ classdef BayesianEstimator < handle
             
             estLB = interp1(cdf, support(uIdx), quantileLB);
             estUB = interp1(cdf, support(uIdx), quantileUB);
+        end
+        
+        function support = convertAxis(~, support)
+            support = support / (2 * pi) * 180;
         end
         
     end
