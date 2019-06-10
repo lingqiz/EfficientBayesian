@@ -53,25 +53,22 @@ xlabel('Orientation (deg)'); ylabel('Bias (deg)');
 %% Full distribution pattern, density plot
 % Use different parameters
 figure();
-estimator = BayesianEstimator(1.0, 2);
+estimator = BayesianEstimator(1.6, 2);
 estimator.computeEstimator();
 
 estimator.visualizeGrid('StepSize', 0.05);
+
+figure();
+estimator.visualizeCurve();
+grid on;
 
 % Use different parameters
 figure();
-estimator = BayesianEstimator(1.0, 1);
+estimator = BayesianEstimator(1.6, 0.5);
 estimator.computeEstimator();
 
 estimator.visualizeGrid('StepSize', 0.05);
 
-%% Test for fitting the data
-figure(); subplot(1, 2, 1);
-estimator = BayesianEstimator(0.5, 6);
-estimator.computeEstimator();
-estimator.visualizeGrid('Clim', [0, 1.6]);
-
-subplot(1, 2, 2);
-estimator = BayesianEstimator(1.5, 6);
-estimator.computeEstimator();
-estimator.visualizeGrid('Clim', [0, 1.6]);
+figure();
+estimator.visualizeCurve();
+grid on;

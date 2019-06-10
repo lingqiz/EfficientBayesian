@@ -100,21 +100,16 @@ classdef BayesianEstimator < handle
         function [thetas, bias, densityGrid] = visualizeGrid(this, varargin)
             p = inputParser;
             p.addParameter('StepSize', 0.05, @(x)(isnumeric(x) && numel(x) == 1));
-            p.addParameter('Clim', [], @(x)(length(x) == 2));
             parse(p, varargin{:});
             
             [thetas, bias, densityGrid] = computeGrid(this, 'StepSize', p.Results.StepSize);
-                        
+            
             thetas = this.convertAxis(thetas);
             bias = this.convertAxis(bias);
+            [X, Y] = meshgrid(thetas, bias);
             
-            if isempty(p.Results.Clim)
-                imagesc(thetas, bias, densityGrid);
-            else
-                imagesc(thetas, bias, densityGrid, p.Results.Clim);
-            end            
-            xlim([0, 180]);  xticks(0 : 36 : 180);
-            ylim([-90, 90]); yticks(-90 : 36 : 90);
+            surf(X, Y, densityGrid); view([0, 90]);
+            xlim([0, 180]); ylim([-90, 90]);
             xlabel('Orientation'); ylabel('Bias');
         end
         
@@ -141,6 +136,14 @@ classdef BayesianEstimator < handle
             
             thetas = this.convertAxis(thetas); estimate = this.convertAxis(wrapToPi(estimate));
             biasLB = this.convertAxis(biasLB); biasUB = this.convertAxis(biasUB);
+        end
+        
+        function [thetas, estimate, biasLB, biasUB] = visualizeCurve(this, varargin)
+            [thetas, estimate, biasLB, biasUB] = this.visualization(varargin{:});
+            errorbar(thetas, estimate, estimate - biasLB, biasUB - estimate, 'LineWidth', 1.0);
+            
+            xlim([0, 180]); ylim([-90, 90]);
+            xlabel('Orientation'); ylabel('Bias');
         end
         
     end
