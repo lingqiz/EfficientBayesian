@@ -25,7 +25,15 @@ plotScatter(xLoc, [scale_woFB; scale_wFB1; scale_wFB2], colors(1, :), -0.2);
 title('Prior Weight $$ \omega $$', 'interpreter', 'latex');
 
 subplot(1, 2, 2); 
-plotScatter(xLoc, [noise_woFB; noise_wFB1; noise_wFB2;], colors(1, :), -0.2);
+plotScatter(xLoc, [noise_woFB; noise_wFB1; noise_wFB2], colors(1, :), -0.2);
+title('Total $$ \sqrt{J(\theta)} $$', 'interpreter', 'latex'); ylim([4, 30]);
+
+figure(3); subplot(2, 2, 1);
+plotLines(xLoc, [scale_woFB; scale_wFB1; scale_wFB2], colors(1, :));
+title('Prior Weight $$ \omega $$', 'interpreter', 'latex');
+
+subplot(2, 2, 3); 
+plotLines(xLoc, [noise_woFB; noise_wFB1; noise_wFB2], colors(1, :));
 title('Total $$ \sqrt{J(\theta)} $$', 'interpreter', 'latex'); ylim([4, 30]);
 
 %% ASD Individual Level
@@ -54,7 +62,17 @@ figure(2);  subplot(1, 2, 1);
 plotScatter(xLoc + 0.1, [scale_woFB; scale_wFB1; scale_wFB2], colors(2, :), +0.2);
 
 subplot(1, 2, 2); 
-plotScatter(xLoc + 0.1, [noise_woFB; noise_wFB1; noise_wFB2;], colors(2, :), +0.2);
+plotScatter(xLoc + 0.1, [noise_woFB; noise_wFB1; noise_wFB2], colors(2, :), +0.2);
+
+suptitle('Individual Analysis');
+
+figure(3); subplot(2, 2, 2);
+plotLines(xLoc, [scale_woFB; scale_wFB1; scale_wFB2], colors(2, :));
+title('Prior Weight $$ \omega $$', 'interpreter', 'latex');
+
+subplot(2, 2, 4); 
+plotLines(xLoc, [noise_woFB; noise_wFB1; noise_wFB2], colors(2, :));
+title('Total $$ \sqrt{J(\theta)} $$', 'interpreter', 'latex'); ylim([4, 30]);
 
 suptitle('Individual Analysis');
 
@@ -167,3 +185,11 @@ xlim([0.5, 3.6]); xticks([0.8, 2, 3.2]);
 xticklabels({'woFB', 'wFB1', 'wFB2'});
 end
 
+function plotLines(xLoc, allPara, lineColor)
+for idx = 1:size(allPara, 2)
+    plot(xLoc, allPara(:, idx), '-o', 'LineWidth', 1, 'Color', lineColor); hold on;
+end
+
+xlim([0.5, 3.6]); xticks([0.8, 2, 3.2]);
+xticklabels({'woFB', 'wFB1', 'wFB2'});
+end
