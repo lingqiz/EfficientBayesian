@@ -4,21 +4,29 @@ nBins = 10; showPlot = false;
 [scale_woFB, noise_woFB] = subjectExtractExtend(dataDir, nBins, showPlot);
 
 dataDir = './wFB1/TD/*.mat';
-nBins = 10; showPlot = false;
 [scale_wFB1, noise_wFB1] = subjectExtractExtend(dataDir, nBins, showPlot);
 
 dataDir = './wFB2/TD/*.mat';
-nBins = 10; showPlot = false;
 [scale_wFB2, noise_wFB2] = subjectExtractExtend(dataDir, nBins, showPlot);
 
 %% Plot
-figure(); subplot(2, 2, 1);
+figure(1); subplot(2, 2, 1);
 boxplot([scale_woFB', scale_wFB1', scale_wFB2'], 'Labels',{'woFB', 'wFB1', 'wFB2'});
-title('Prior, TD Group'); ylim([0, 2]);
+title('Prior Weight $$ \omega $$ TD Group', 'interpreter', 'latex'); ylim([0, 1.01]);
 
 subplot(2, 2, 3);
 boxplot([noise_woFB', noise_wFB1', noise_wFB2'], 'Labels',{'woFB', 'wFB1', 'wFB2'});
-title('Noise, TD Group'); ylim([4, 30]);
+title('Total $$ \sqrt{J(\theta)} $$ TD Group', 'interpreter', 'latex'); ylim([4, 30]);
+
+xLoc = [0.8, 2, 3.2];
+figure(2);  subplot(1, 2, 1); 
+colors = get(gca,'colororder');
+plotScatter(xLoc, [scale_woFB; scale_wFB1; scale_wFB2], colors(1, :), -0.2);
+title('Prior Weight $$ \omega $$', 'interpreter', 'latex');
+
+subplot(1, 2, 2); 
+plotScatter(xLoc, [noise_woFB; noise_wFB1; noise_wFB2;], colors(1, :), -0.2);
+title('Total $$ \sqrt{J(\theta)} $$', 'interpreter', 'latex'); ylim([4, 30]);
 
 %% ASD Individual Level
 dataDir = './woFB/ASD/*.mat';
@@ -26,21 +34,29 @@ nBins = 10; showPlot = false;
 [scale_woFB, noise_woFB] = subjectExtractExtend(dataDir, nBins, showPlot);
 
 dataDir = './wFB1/ASD/*.mat';
-nBins = 10; showPlot = false;
 [scale_wFB1, noise_wFB1] = subjectExtractExtend(dataDir, nBins, showPlot);
 
 dataDir = './wFB2/ASD/*.mat';
-nBins = 10; showPlot = false;
 [scale_wFB2, noise_wFB2] = subjectExtractExtend(dataDir, nBins, showPlot);
 
 %% Plot
-subplot(2, 2, 2);
+figure(1); subplot(2, 2, 2);
 boxplot([scale_woFB', scale_wFB1', scale_wFB2'], 'Labels',{'woFB', 'wFB1', 'wFB2'});
-title('Prior, ASD Group'); ylim([0, 2]);
+title('Prior Weight $$ \omega $$ ASD Group', 'interpreter', 'latex'); ylim([0, 1.01]);
 
 subplot(2, 2, 4);
 boxplot([noise_woFB', noise_wFB1', noise_wFB2'], 'Labels',{'woFB', 'wFB1', 'wFB2'});
-title('Noise, ASD Group'); ylim([4, 30]);
+title('Total $$ \sqrt{J(\theta)} $$ ASD Group', 'interpreter', 'latex'); ylim([4, 30]);
+
+suptitle('Individual Analysis');
+
+figure(2);  subplot(1, 2, 1); 
+plotScatter(xLoc + 0.1, [scale_woFB; scale_wFB1; scale_wFB2], colors(2, :), +0.2);
+
+subplot(1, 2, 2); 
+plotScatter(xLoc + 0.1, [noise_woFB; noise_wFB1; noise_wFB2;], colors(2, :), +0.2);
+
+suptitle('Individual Analysis');
 
 %% Helper functions
 function [scale, noise] = subjectExtractExtend(dataDir, nBins, showPlot)
@@ -108,7 +124,7 @@ prior = fisher ./ trapz(range, fisher);
 
 noise = trapz(range, fisher);
 loss  = @(priorScale) priorLoss(priorScale, range, prior);
-scale = fmincon(loss, 1, [], [], [], [], 0, 2);
+scale = fmincon(loss, 1, [], [], [], [], 0, 1);
 
 if showPlot    
     figure();
@@ -137,5 +153,17 @@ end
         loss = norm(priorFunc(center) - value);
     end
 
+end
+
+function plotScatter(xLoc, allPara, dotColor, offSet)
+for idx = 1:length(xLoc)
+    para = allPara(idx, :);
+    scatter(xLoc(idx) * ones(size(para)), para, ...
+        'MarkerEdgeColor', dotColor, 'MarkerFaceColor', dotColor); hold on;        
+end
+errorbar(xLoc + offSet, mean(allPara, 2), std(allPara, 0, 2) / sqrt(size(allPara, 2)), 'o', 'Color', dotColor);
+
+xlim([0.5, 3.6]); xticks([0.8, 2, 3.2]);
+xticklabels({'woFB', 'wFB1', 'wFB2'});
 end
 
