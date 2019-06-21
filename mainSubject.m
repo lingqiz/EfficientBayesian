@@ -107,9 +107,20 @@ end
 function [scale, noise] = extractPriorExtend(target, response, nBins, showPlot)
 
 % convert to [0, 2 pi] range
-target = target / 180 * (2 * pi);
+target   = target / 180 * (2 * pi);
 response = response / 180 * (2 * pi);
 
+% mirroring the data
+target_lh   = target(target <= pi) + pi;
+response_lh = response(target <= pi) + pi;
+
+target_hh   = target(target > pi) - pi;
+response_hh = response(target > pi) - pi;
+
+target   = wrapTo2Pi([target; target_lh; target_hh]);
+response = wrapTo2Pi([response; response_lh; response_hh]);
+
+% analysis
 delta = (2*pi / nBins) / 2;
 range = 0: 0.05: 2*pi;
 
