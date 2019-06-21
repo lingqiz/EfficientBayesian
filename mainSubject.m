@@ -1,6 +1,6 @@
 %% TD Individual Level
 dataDir = './woFB/TD/*.mat';
-nBins = 10; showPlot = false;
+nBins = 6; showPlot = false;
 [scale_woFB, noise_woFB] = subjectExtractExtend(dataDir, nBins, showPlot);
 
 dataDir = './wFB1/TD/*.mat';
@@ -38,7 +38,7 @@ title('Total $$ \sqrt{J(\theta)} $$', 'interpreter', 'latex'); ylim([4, 30]);
 
 %% ASD Individual Level
 dataDir = './woFB/ASD/*.mat';
-nBins = 10; showPlot = false;
+nBins = 6; showPlot = false;
 [scale_woFB, noise_woFB] = subjectExtractExtend(dataDir, nBins, showPlot);
 
 dataDir = './wFB1/ASD/*.mat';
@@ -88,7 +88,7 @@ files = dir(dataDir);
 
 scale = [];
 noise = [];
-for file = files'
+for file = files'    
     data = load(fullfile(file.folder, file.name));
     target   = data.all_data(1, :);
     response = data.all_data(2, :);
@@ -96,8 +96,8 @@ for file = files'
     data_idx = target > 0;
     target = wrapOrientation(target(data_idx));
     response = wrapOrientation(response(data_idx));
-    
-    [thisScale, thisNoise] = extractPriorExtend(target', response', nBins, showPlot);
+        
+    [thisScale, thisNoise] = fitExtract(target', response', nBins, showPlot);
     scale = [scale, thisScale];
     noise = [noise, thisNoise];
 end

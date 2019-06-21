@@ -1,5 +1,5 @@
 %% TD Group Level
-nBootstrap = 1e4; nBins = 24; 
+nBootstrap = 2e3; nBins = 18; 
 load('woFB_td.mat');
 [scale_woFB_td, noise_woFB_td] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
@@ -10,7 +10,7 @@ load('wFB2_td.mat');
 [scale_wFB2_td, noise_wFB2_td] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
 %% ASD Group Level
-nBootstrap = 1e4; nBins = 18;
+nBootstrap = 2e3; nBins = 12;
 load('woFB_asd.mat');
 [scale_woFB_asd, noise_woFB_asd] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
@@ -53,6 +53,6 @@ function [scale, noise] = bootstrap(allTarget, allResponse, nBootstrap, nBins)
     
     parfor idx = 1:nBootstrap
         [target, response] = resample(allTarget, allResponse);
-        [scale(idx), noise(idx)] = extractPrior(target, response, nBins, false);
+        [scale(idx), noise(idx)] = fitExtract(target, response, nBins);
     end
 end
