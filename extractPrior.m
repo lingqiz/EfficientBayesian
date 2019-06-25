@@ -1,9 +1,26 @@
-function [average, spread, range] = extractPrior(target, response, nBins)
+function [average, spread, range] = extractPrior(target, response, nBins, mirror)
+
+if ~exist('mirror','var')     
+      mirror = false;
+end
 
 % convert to [0, 2 pi] range
 target = target / 180 * (2 * pi);
 response = response / 180 * (2 * pi);
 
+% mirroring the data
+if mirror
+target_lh   = target(target <= pi) + pi;
+response_lh = response(target <= pi) + pi;
+
+target_hh   = target(target > pi) - pi;
+response_hh = response(target > pi) - pi;
+
+target   = wrapTo2Pi([target; target_lh; target_hh]);
+response = wrapTo2Pi([response; response_lh; response_hh]);
+end
+
+% bias & variance calculation
 delta = (2*pi / nBins) / 2;
 range = 0: 0.025: 2*pi;
 
