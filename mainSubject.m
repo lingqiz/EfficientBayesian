@@ -115,7 +115,7 @@ lm.Coefficients
 line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
 legend(line, 'p = 0.052');
 
-suptitle('Correlation Analysis');
+suptitle('Correlation, Prior end of learning');
 
 %% Correlation Analysis, Change in Prior
 figure(); subplot(1, 2, 1);
@@ -124,11 +124,79 @@ hold on; grid on;
 scatter(prior_asd(:, 5), prior_asd(:, 2) - prior_asd(:, 3), 20, 'r');
 xlabel('AQ score'); ylabel('Change in Prior');
 
+lm = fitlm([prior_td(:, 5); prior_asd(:, 5)], [prior_td(:, 2) - prior_td(:, 3); prior_asd(:, 2) - prior_asd(:, 3)], ...
+    'linear', 'RobustOpts', 'on');
+lm.Coefficients
+
+plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
+
 subplot(1, 2, 2);
 scatter(prior_td(:, 6), prior_td(:, 2) - prior_td(:, 3), 20, 'k');
 hold on; grid on;
 scatter(prior_asd(:, 6), prior_asd(:, 2) - prior_asd(:, 3), 20, 'r');
 xlabel('SCQ score'); ylabel('Change in Prior');
+
+lm = fitlm([prior_td(:, 6); prior_asd(:, 6)], [prior_td(:, 2) - prior_td(:, 3); prior_asd(:, 2) - prior_asd(:, 3)], ...
+    'linear', 'RobustOpts', 'on');
+lm.Coefficients
+
+plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
+
+%% Correlation Analysis, FI before learning
+colID = 2;
+figure(); subplot(1, 2, 1);
+scatter(noise_td(:, 5), noise_td(:, colID), 20, 'k');
+hold on; grid on;
+scatter(noise_asd(:, 5), noise_asd(:, colID), 20, 'r');
+xlabel('AQ score'); ylabel('Total FI, before learning');
+
+lm = fitlm([noise_td(:, 5); noise_asd(:, 5)], [noise_td(:, colID); noise_asd(:, colID)], 'linear');
+lm.Coefficients
+
+line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
+legend(line, 'p = 0.032'); ylim([5, 30]);
+
+subplot(1, 2, 2);
+scatter(noise_td(:, 6), noise_td(:, colID), 20, 'k');
+hold on; grid on;
+scatter(noise_asd(:, 6), noise_asd(:, colID), 20, 'r');
+xlabel('SCQ score'); ylabel('Total FI, before learning');
+
+lm = fitlm([noise_td(:, 6); noise_asd(:, 6)], [noise_td(:, colID); noise_asd(:, colID)], 'linear');
+lm.Coefficients
+
+line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
+legend(line, 'p = 0.0389'); ylim([5, 30]);
+
+suptitle('Correlation, FI before learning');
+
+%% Correlation Analysis, FI after learning
+colID = 4;
+figure(); subplot(1, 2, 1);
+scatter(noise_td(:, 5), noise_td(:, colID), 20, 'k');
+hold on; grid on;
+scatter(noise_asd(:, 5), noise_asd(:, colID), 20, 'r');
+xlabel('AQ score'); ylabel('Total FI, after learning');
+
+lm = fitlm([noise_td(:, 5); noise_asd(:, 5)], [noise_td(:, colID); noise_asd(:, colID)], 'linear');
+lm.Coefficients
+
+line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
+legend(line, 'p = 0.042'); ylim([5, 30]);
+
+subplot(1, 2, 2);
+scatter(noise_td(:, 6), noise_td(:, colID), 20, 'k');
+hold on; grid on;
+scatter(noise_asd(:, 6), noise_asd(:, colID), 20, 'r');
+xlabel('SCQ score'); ylabel('Total FI, after learning');
+
+lm = fitlm([noise_td(:, 6); noise_asd(:, 6)], [noise_td(:, colID); noise_asd(:, colID)], 'linear');
+lm.Coefficients
+
+line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
+legend(line, 'p = 0.061'); ylim([5, 30]);
+
+suptitle('Correlation, FI after learning');
 
 %% Helper functions
 function [priorPara, noisePara] = collectFit(dirWoFB, dirWFB1, dirWFB2, nSubject)
