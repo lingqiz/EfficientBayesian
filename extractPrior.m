@@ -1,7 +1,7 @@
-function [average, spread, range] = extractPrior(target, response, nBins, mirror)
+function [average, spread, range] = extractPrior(target, response, nBins, mirror, plotData, plotColor)
 
-if ~exist('mirror','var')     
-      mirror = false;
+if ~exist('mirror','var')
+    mirror = false;
 end
 
 % convert to [0, 2 pi] range
@@ -10,14 +10,18 @@ response = response / 180 * (2 * pi);
 
 % mirroring the data
 if mirror
-target_lh   = target(target <= pi) + pi;
-response_lh = response(target <= pi) + pi;
+    target_lh   = target(target <= pi) + pi;
+    response_lh = response(target <= pi) + pi;
+    
+    target_hh   = target(target > pi) - pi;
+    response_hh = response(target > pi) - pi;
+    
+    target   = wrapTo2Pi([target; target_lh; target_hh]);
+    response = wrapTo2Pi([response; response_lh; response_hh]);
+end
 
-target_hh   = target(target > pi) - pi;
-response_hh = response(target > pi) - pi;
-
-target   = wrapTo2Pi([target; target_lh; target_hh]);
-response = wrapTo2Pi([response; response_lh; response_hh]);
+if plotData
+    scatter(target, wrapToPi(response - target), 10, plotColor);
 end
 
 % bias & variance calculation
@@ -40,7 +44,7 @@ for idx = 1:length(range)
     else
         binData = response(target >= binLB & target <= binUB);
     end
-        
+    
     meanRes = circ_mean(binData);
     average(idx) = wrapToPi(meanRes - range(idx));
     spread(idx)  = circ_kappa(binData);
