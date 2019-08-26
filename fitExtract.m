@@ -12,6 +12,10 @@ if ~exist('mirror','var')
       mirror = false;
 end
 
+if ~exist('plotColor', 'var')
+    plotColor = [0, 0, 0];
+end
+
 [average, spread, range] = extractPrior(allTarget, allResponse, nBins, mirror, plotData, plotColor);
 paras = expectedBias(average, spread, range, showPlot, plotColor);
 scale = paras(1); noise = paras(2);

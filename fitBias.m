@@ -4,18 +4,18 @@ figure(1); colors = get(gca,'colororder');
 
 load('woFB_td.mat');
 subplot(3, 3, 1);
-[average, spread, range] = extractPrior(allTarget', allResponse', nBins);
+[average, spread, range] = extractPrior(allTarget', allResponse', nBins, false, false, colors(1, :));
 paras_woFB_td = expectedBias(average, spread, range, showPlot, colors(1, :));
 plotExtract(spread, paras_woFB_td(1), range, [4, 7], colors(1, :)); 
 
 load('wFB1_td.mat');
 subplot(3, 3, 2);
-[average, spread, range] = extractPrior(allTarget', allResponse', nBins);
+[average, spread, range] = extractPrior(allTarget', allResponse', nBins, false, false, colors(2, :));
 paras_wFB1_td = expectedBias(average, spread, range, showPlot, colors(2, :));
 plotExtract(spread, paras_wFB1_td(1), range, [5, 8], colors(2, :));
 load('wFB2_td.mat');
 subplot(3, 3, 3);
-[average, spread, range] = extractPrior(allTarget', allResponse', nBins);
+[average, spread, range] = extractPrior(allTarget', allResponse', nBins, false, false, colors(3, :));
 paras_wFB2_td = expectedBias(average, spread, range, showPlot, colors(3, :));
 plotExtract(spread, paras_wFB2_td(1), range, [6, 9], colors(3, :));
 
@@ -27,17 +27,17 @@ figure(2); colors = get(gca,'colororder');
 
 load('woFB_asd.mat');
 subplot(3, 3, 1);
-[average, spread, range] = extractPrior(allTarget', allResponse', nBins);
+[average, spread, range] = extractPrior(allTarget', allResponse', nBins, false, false, colors(1, :));
 paras_woFB_asd = expectedBias(average, spread, range, showPlot, colors(1, :));
 plotExtract(spread, paras_woFB_asd(1), range, [4, 7], colors(1, :));
 load('wFB1_asd.mat');
 subplot(3, 3, 2);
-[average, spread, range] = extractPrior(allTarget', allResponse', nBins);
+[average, spread, range] = extractPrior(allTarget', allResponse', nBins, false, false, colors(2, :));
 paras_wFB1_asd = expectedBias(average, spread, range, showPlot, colors(2, :));
 plotExtract(spread, paras_wFB1_asd(1), range, [5, 8], colors(2, :));
 load('wFB2_asd.mat');
 subplot(3, 3, 3);
-[average, spread, range] = extractPrior(allTarget', allResponse', nBins);
+[average, spread, range] = extractPrior(allTarget', allResponse', nBins, false, false, colors(3, :));
 paras_wFB2_asd = expectedBias(average, spread, range, showPlot, colors(3, :));
 plotExtract(spread, paras_wFB2_asd(1), range, [6, 9], colors(3, :));
 
