@@ -1,15 +1,15 @@
 function [scale, noise] = fitExtract(allTarget, allResponse, nBins, showPlot, mirror, plotData, plotColor)
 
-if ~exist('showPlot','var')    
+if ~exist('showPlot','var')
     showPlot = false;
 end
 
-if ~exist('plotData','var')    
+if ~exist('plotData','var')
     plotData = false;
 end
 
-if ~exist('mirror','var')     
-      mirror = false;
+if ~exist('mirror','var')
+    mirror = false;
 end
 
 if ~exist('plotColor', 'var')
