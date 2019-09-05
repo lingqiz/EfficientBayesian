@@ -17,7 +17,7 @@ if ~exist('plotColor', 'var')
 end
 
 [average, spread, range] = extractPrior(allTarget, allResponse, nBins, mirror, plotData, plotColor);
-[paras, l1, l2] = expectedBias(average, spread, range, showPlot, plotColor);
+[paras] = expectedBias(average, spread, range, showPlot, plotColor);
 scale = paras(1); noise = paras(2);
 
 end
