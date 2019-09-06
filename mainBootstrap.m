@@ -20,6 +20,42 @@ load('wFB1_asd.mat');
 load('wFB2_asd.mat');
 [scale_wFB2_asd, noise_wFB2_asd] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
+% Statistical Tests
+%% prior before feedback
+diffDist = scale_woFB_asd - scale_woFB_td;
+testStat = mean(diffDist)
+nullStat = diffDist - testStat;
+std(nullStat)
+sum(abs(nullStat) > abs(testStat)) / nBootstrap
+
+%% prior change from woFB to wFB2
+diffStat = (scale_woFB_td - scale_wFB2_td) - (scale_woFB_asd - scale_wFB2_asd);
+testStat = mean(diffStat)
+nullStat = diffStat - testStat;
+std(nullStat)
+sum(nullStat > testStat) / nBootstrap
+
+%% total fisher information
+diffStat = noise_woFB_td - noise_woFB_asd;
+testStat = mean(diffStat)
+nullDist = diffStat - testStat;
+std(nullDist)
+sum(nullDist > testStat) / nBootstrap
+
+%% control fisher change
+diffDist = noise_wFB2_td - noise_woFB_td;
+testStat = mean(diffDist)
+nullDist = diffDist - testStat;
+std(nullDist)
+sum(nullDist > testStat) / nBootstrap
+
+%% asd fisher change
+diffDist = noise_wFB2_asd - noise_woFB_asd;
+testStat = mean(diffDist)
+nullDist = diffDist - testStat;
+std(nullDist)
+sum(abs(nullDist) > abs(testStat)) / nBootstrap
+
 %% Plot Parameter Change
 figure; subplot(1, 2, 1);
 hold on; grid on;
