@@ -204,6 +204,16 @@ ylim([5, 30]);
 
 suptitle('Correlation with FI Parameter');
 
+%% Correlation, prior & FI
+figure(); colIdx = 4;
+scatter(noise_td(:, colIdx), prior_td(:, colIdx), 40, [0, 0, 0], 'filled'); hold on;
+scatter(noise_asd(:, colIdx), prior_asd(:, colIdx), 40, [0.8, 0, 0], 'filled');
+xlabel('FI'); ylabel('Prior');
+
+grid on;
+lm = fitlm([noise_td(:, colIdx); noise_asd(:, colIdx)], [prior_td(:, colIdx); prior_asd(:, colIdx)], 'linear')
+line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
+
 %% Helper functions
 function [priorPara, noisePara] = collectFit(dirWoFB, dirWFB1, dirWFB2, nSubject)
 
