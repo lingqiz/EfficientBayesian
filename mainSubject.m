@@ -90,11 +90,11 @@ plotSubject('./woFB/ASD/*.mat', './wFB1/ASD/*.mat', './wFB2/ASD/*.mat', 'ASD-', 
 load('clinicalData.mat');
 sessionID = 4;
 
-figure(); subplot(1, 2, 1);
+figure(); subplot(2, 2, 1);
 scatter(prior_td(:, 5), prior_td(:, sessionID), 40, [0, 0, 0], 'filled');
-hold on; grid on;
+hold on;
 scatter(prior_asd(:, 5), prior_asd(:, sessionID), 40, [0.8, 0, 0], 'filled');
-% xlabel('AQ score'); 
+xlabel('AQ score'); 
 ylabel('$$ \omega $$ (Prior Weight)', 'interpreter', 'latex');
 
 lm = fitlm([prior_td(:, 5); prior_asd(:, 5)], [prior_td(:, sessionID); prior_asd(:, sessionID)], ...
@@ -104,12 +104,12 @@ lm = fitlm([prior_td(:, 5); prior_asd(:, 5)], [prior_td(:, sessionID); prior_asd
 line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
 ylim([0, 0.75]);
 
-subplot(1, 2, 2);
+subplot(2, 2, 3);
 scatter(prior_td(:, 6), prior_td(:, sessionID), 40, [0, 0, 0], 'filled');
-hold on; grid on;
+hold on;
 scatter(prior_asd(:, 6), prior_asd(:, sessionID), 40, [0.8, 0, 0], 'filled');
-% xlabel('SCQ score'); 
-% ylabel('$$ \omega $$ (Prior Weight)', 'interpreter', 'latex');
+xlabel('SCQ score'); 
+ylabel('$$ \omega $$ (Prior Weight)', 'interpreter', 'latex');
 
 lm = fitlm([prior_td(:, 6); prior_asd(:, 6)], [prior_td(:, sessionID); prior_asd(:, sessionID)], ...
     'linear', 'RobustOpts', 'on')
@@ -119,13 +119,12 @@ line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estim
 legend('Control', 'ASD');
 ylim([0, 0.75]);
 
-suptitle('Correlation with Prior Parameter');
 
 %% Correlation Analysis, Change in Prior
 figure(); subplot(1, 2, 1); paraIdx = 4;
 
 scatter(prior_td(:, 5), prior_td(:, 2) - prior_td(:, paraIdx), 20, 'k');
-hold on; grid on;
+hold on;
 scatter(prior_asd(:, 5), prior_asd(:, 2) - prior_asd(:, paraIdx), 20, 'r');
 xlabel('AQ score'); ylabel('Change in Prior');
 
@@ -137,7 +136,7 @@ plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1),
 
 subplot(1, 2, 2);
 scatter(prior_td(:, 6), prior_td(:, 2) - prior_td(:, paraIdx), 20, 'k');
-hold on; grid on;
+hold on;
 scatter(prior_asd(:, 6), prior_asd(:, 2) - prior_asd(:, paraIdx), 20, 'r');
 xlabel('SCQ score'); ylabel('Change in Prior');
 
@@ -177,9 +176,9 @@ suptitle('Correlation, FI before learning');
 
 %% Correlation Analysis, FI after learning
 colID = 4;
-figure(); subplot(1, 2, 1);
+subplot(2, 2, 2); 
 scatter(noise_td(:, 5), noise_td(:, colID), 40, [0, 0, 0], 'filled');
-hold on; grid on;
+hold on;
 scatter(noise_asd(:, 5), noise_asd(:, colID), 40, [0.8, 0, 0], 'filled');
 xlabel('AQ score'); ylabel('$$ \lambda $$ (Total $$ \sqrt{I_{F}(\theta)} $$)', 'interpreter', 'latex');
 
@@ -189,12 +188,12 @@ lm = fitlm([noise_td(:, 5); noise_asd(:, 5)], [noise_td(:, colID); noise_asd(:, 
 line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
 ylim([5, 30]);
 
-subplot(1, 2, 2);
+subplot(2, 2, 4);
 scatter(noise_td(:, 6), noise_td(:, colID), 40, [0, 0, 0], 'filled');
-hold on; grid on;
+hold on;
 scatter(noise_asd(:, 6), noise_asd(:, colID), 40, [0.8, 0, 0], 'filled');
 xlabel('SCQ score'); 
-% ylabel('$$ \lambda $$ (Total $$ \sqrt{I_{F}(\theta)} $$)', 'interpreter', 'latex');
+ylabel('$$ \lambda $$ (Total $$ \sqrt{I_{F}(\theta)} $$)', 'interpreter', 'latex');
 
 lm = fitlm([noise_td(:, 6); noise_asd(:, 6)], [noise_td(:, colID); noise_asd(:, colID)], 'linear')
 % lm.Coefficients
@@ -202,7 +201,6 @@ lm = fitlm([noise_td(:, 6); noise_asd(:, 6)], [noise_td(:, colID); noise_asd(:, 
 line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
 ylim([5, 30]);
 
-suptitle('Correlation with FI Parameter');
 
 %% Correlation, prior & FI
 figure(); colIdx = 4;
