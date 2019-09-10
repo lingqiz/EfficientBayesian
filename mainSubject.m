@@ -202,7 +202,7 @@ line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estim
 ylim([5, 30]);
 
 
-%% Correlation, prior & FI
+%% Correlation, prior & FI (in different session)
 figure(); subplot(1, 2, 1); colIdx = 4;
 scatter(noise_td(:, colIdx), prior_td(:, colIdx), 40, [0, 0, 0], 'filled'); hold on;
 scatter(noise_asd(:, colIdx), prior_asd(:, colIdx), 40, [0.8, 0, 0], 'filled');
@@ -212,7 +212,7 @@ grid on;
 lm = fitlm([noise_td(:, colIdx); noise_asd(:, colIdx)], [prior_td(:, colIdx); prior_asd(:, colIdx)], 'linear')
 line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
 
-%% Correlation, change prior & FI
+%% Correlation, change in [prior & FI]
 subplot(1, 2, 2); colIdx = 4;
 scatter(noise_td(:, 4) - noise_td(:, 2), prior_td(:, 2) - prior_td(:, 4), 40, [0, 0, 0], 'filled'); hold on;
 scatter(noise_asd(:, 4) - noise_asd(:, 2), prior_asd(:, 2) - prior_asd(:, 4), 40, [0.8, 0, 0], 'filled');
@@ -222,6 +222,16 @@ grid on;
 lm = fitlm([noise_td(:, 4) - noise_td(:, 2); noise_asd(:, 4) - noise_asd(:, 2)], ...
     [prior_td(:, 2) - prior_td(:, 4); prior_asd(:, 2) - prior_asd(:, 4)], 'linear', 'RobustOpts', 'on')
 
+line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
+
+%% Correlation, FI before feedback with prior
+figure(); colIdx = 4;
+scatter(noise_td(:, 2), prior_td(:, colIdx), 40, [0, 0, 0], 'filled'); hold on;
+scatter(noise_asd(:, 2), prior_asd(:, colIdx), 40, [0.8, 0, 0], 'filled');
+xlabel('FI before learning'); ylabel('Prior after learning');
+
+grid on;
+lm = fitlm([noise_td(:, 2); noise_asd(:, 2)], [prior_td(:, colIdx); prior_asd(:, colIdx)], 'linear')
 line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
 
 
