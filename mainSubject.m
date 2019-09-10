@@ -234,7 +234,6 @@ grid on;
 lm = fitlm([noise_td(:, 2); noise_asd(:, 2)], [prior_td(:, colIdx); prior_asd(:, colIdx)], 'linear')
 line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
 
-
 %% Helper functions
 function [priorPara, noisePara] = collectFit(dirWoFB, dirWFB1, dirWFB2, nSubject)
 
