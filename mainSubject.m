@@ -90,12 +90,18 @@ plotSubject('./woFB/ASD/*.mat', './wFB1/ASD/*.mat', './wFB2/ASD/*.mat', 'ASD-', 
 load('clinicalData.mat');
 sessionID = 4;
 
+colormap = cbrewer('seq', 'YlGnBu', 9);
+color_td = colormap(7, :);
+
+colormap = cbrewer('seq', 'YlOrRd', 9);
+color_asd = colormap(7, :);
+
 figure(); subplot(2, 2, 1);
-scatter(prior_td(:, 5), prior_td(:, sessionID), 40, [0, 0, 0], 'filled');
+scatter(prior_td(:, 5), prior_td(:, sessionID), 40, color_td, 'filled');
 hold on;
-scatter(prior_asd(:, 5), prior_asd(:, sessionID), 40, [0.8, 0, 0], 'filled');
-xlabel('AQ score'); 
-ylabel('$$ \omega $$ (Prior Weight)', 'interpreter', 'latex');
+scatter(prior_asd(:, 5), prior_asd(:, sessionID), 40, color_asd, 'filled');
+xlabel('AQ score', 'interpreter', 'latex'); 
+ylabel('$$ \omega $$ - ``Prior"', 'interpreter', 'latex');
 
 lm = fitlm([prior_td(:, 5); prior_asd(:, 5)], [prior_td(:, sessionID); prior_asd(:, sessionID)], ...
     'linear', 'RobustOpts', 'on')
@@ -104,21 +110,72 @@ lm = fitlm([prior_td(:, 5); prior_asd(:, 5)], [prior_td(:, sessionID); prior_asd
 line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
 ylim([0, 0.75]);
 
+errorbar(5, median(prior_td(:, sessionID)), std(prior_td(:, sessionID)) ...
+    / sqrt(length(prior_td(:, sessionID))), 'o', 'Color', color_td, 'LineWidth', 1.5);
+
+errorbar(45, median(prior_asd(:, sessionID)), std(prior_asd(:, sessionID)) ...
+    / sqrt(length(prior_asd(:, sessionID))), 'o', 'Color', color_asd, 'LineWidth', 1.5);
+
 subplot(2, 2, 3);
-scatter(prior_td(:, 6), prior_td(:, sessionID), 40, [0, 0, 0], 'filled');
+scatter(prior_td(:, 6), prior_td(:, sessionID), 40, color_td, 'filled');
 hold on;
-scatter(prior_asd(:, 6), prior_asd(:, sessionID), 40, [0.8, 0, 0], 'filled');
-xlabel('SCQ score'); 
-ylabel('$$ \omega $$ (Prior Weight)', 'interpreter', 'latex');
+scatter(prior_asd(:, 6), prior_asd(:, sessionID), 40, color_asd, 'filled');
+xlabel('SCQ score', 'interpreter', 'latex'); 
+ylabel('$$ \omega $$ - ``Prior"', 'interpreter', 'latex');
 
 lm = fitlm([prior_td(:, 6); prior_asd(:, 6)], [prior_td(:, sessionID); prior_asd(:, sessionID)], ...
     'linear', 'RobustOpts', 'on')
 % lm.Coefficients
 
+errorbar(2.5, median(prior_td(:, sessionID)), std(prior_td(:, sessionID)) ...
+    / sqrt(length(prior_td(:, sessionID))), 'o', 'Color', color_td, 'LineWidth', 1.5);
+
+errorbar(22.5, median(prior_asd(:, sessionID)), std(prior_asd(:, sessionID)) ...
+    / sqrt(length(prior_asd(:, sessionID))), 'o', 'Color', color_asd, 'LineWidth', 1.5);
+
 line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
 legend('Control', 'ASD');
 ylim([0, 0.75]);
 
+%% Correlation Analysis, FI after learning
+colID = 4;
+subplot(2, 2, 2); 
+scatter(noise_td(:, 5), noise_td(:, colID), 40, color_td, 'filled');
+hold on;
+scatter(noise_asd(:, 5), noise_asd(:, colID), 40, color_asd, 'filled');
+xlabel('AQ score', 'interpreter', 'latex'); 
+ylabel('$ \lambda $ - $ \int \sqrt{I_{F}(\theta)} d \theta $', 'interpreter', 'latex');
+
+lm = fitlm([noise_td(:, 5); noise_asd(:, 5)], [noise_td(:, colID); noise_asd(:, colID)], 'linear')
+% lm.Coefficients
+
+line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
+ylim([5, 30]);
+
+errorbar(5, median(noise_td(:, sessionID)), std(noise_td(:, sessionID)) ...
+    / sqrt(length(noise_td(:, sessionID))), 'o', 'Color', color_td, 'LineWidth', 1.5);
+
+errorbar(45, median(noise_asd(:, sessionID)), std(noise_asd(:, sessionID)) ...
+    / sqrt(length(noise_asd(:, sessionID))), 'o', 'Color', color_asd, 'LineWidth', 1.5);
+
+subplot(2, 2, 4);
+scatter(noise_td(:, 6), noise_td(:, colID), 40, color_td, 'filled');
+hold on;
+scatter(noise_asd(:, 6), noise_asd(:, colID), 40, color_asd, 'filled');
+xlabel('SCQ score', 'interpreter', 'latex'); 
+ylabel('$ \lambda $ - $ \int \sqrt{I_{F}(\theta)} d \theta $', 'interpreter', 'latex');
+
+lm = fitlm([noise_td(:, 6); noise_asd(:, 6)], [noise_td(:, colID); noise_asd(:, colID)], 'linear')
+% lm.Coefficients
+
+line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
+ylim([5, 30]);
+
+errorbar(2.5, median(noise_td(:, sessionID)), std(noise_td(:, sessionID)) ...
+    / sqrt(length(noise_td(:, sessionID))), 'o', 'Color', color_td, 'LineWidth', 1.5);
+
+errorbar(22.5, median(noise_asd(:, sessionID)), std(noise_asd(:, sessionID)) ...
+    / sqrt(length(noise_asd(:, sessionID))), 'o', 'Color', color_asd, 'LineWidth', 1.5);
 
 %% Correlation Analysis, Change in Prior
 figure(); subplot(1, 2, 1); paraIdx = 4;
@@ -173,34 +230,6 @@ line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estim
 legend(line, 'p = 0.0389'); ylim([5, 30]);
 
 suptitle('Correlation, FI before learning');
-
-%% Correlation Analysis, FI after learning
-colID = 4;
-subplot(2, 2, 2); 
-scatter(noise_td(:, 5), noise_td(:, colID), 40, [0, 0, 0], 'filled');
-hold on;
-scatter(noise_asd(:, 5), noise_asd(:, colID), 40, [0.8, 0, 0], 'filled');
-xlabel('AQ score'); ylabel('$$ \lambda $$ (Total $$ \sqrt{I_{F}(\theta)} $$)', 'interpreter', 'latex');
-
-lm = fitlm([noise_td(:, 5); noise_asd(:, 5)], [noise_td(:, colID); noise_asd(:, colID)], 'linear')
-% lm.Coefficients
-
-line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
-ylim([5, 30]);
-
-subplot(2, 2, 4);
-scatter(noise_td(:, 6), noise_td(:, colID), 40, [0, 0, 0], 'filled');
-hold on;
-scatter(noise_asd(:, 6), noise_asd(:, colID), 40, [0.8, 0, 0], 'filled');
-xlabel('SCQ score'); 
-ylabel('$$ \lambda $$ (Total $$ \sqrt{I_{F}(\theta)} $$)', 'interpreter', 'latex');
-
-lm = fitlm([noise_td(:, 6); noise_asd(:, 6)], [noise_td(:, colID); noise_asd(:, colID)], 'linear')
-% lm.Coefficients
-
-line = plot(xlim(), xlim() * lm.Coefficients.Estimate(2) + lm.Coefficients.Estimate(1), '--k', 'LineWidth', 2);
-ylim([5, 30]);
-
 
 %% Correlation, prior & FI (in different session)
 figure(); subplot(1, 2, 1); colIdx = 4;
