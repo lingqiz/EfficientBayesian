@@ -1,6 +1,8 @@
 %% TD Individual Level
 dataDir = './woFB/TD/*.mat';
 nBins = 10; showPlot = false;
+addpath('CircStat/');
+
 [scale_woFB, noise_woFB] = subjectExtractExtend(dataDir, nBins, showPlot, zeros(1, 3));
 
 dataDir = './wFB1/TD/*.mat';
