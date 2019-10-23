@@ -79,10 +79,23 @@ title('Total $$ \sqrt{J(\theta)} $$', 'interpreter', 'latex'); ylim([4, 30]);
 suptitle('Individual Analysis');
 
 %% Plot individual data - TD
-plotSubject('./woFB/TD/*.mat', './wFB1/TD/*.mat', './wFB2/TD/*.mat', 'TD-', './SubjectPlot/TD')
+% Control
+colormap = cbrewer('seq', 'YlGnBu', 9);
+color1 = colormap(9, :);
+color2 = colormap(7, :);
+color3 = colormap(5, :);
+plotColor = [color1; color2; color3];
+
+plotSubject('./woFB/TD/*.mat', './wFB1/TD/*.mat', './wFB2/TD/*.mat', 'TD-', './SubjectPlot/TD', plotColor)
 
 %% Plot individual data - ASD
-plotSubject('./woFB/ASD/*.mat', './wFB1/ASD/*.mat', './wFB2/ASD/*.mat', 'ASD-', './SubjectPlot/ASD')
+colormap = cbrewer('seq', 'YlOrRd', 9);
+color1 = colormap(9, :);
+color2 = colormap(7, :);
+color3 = colormap(5, :);
+plotColor = [color1; color2; color3];
+
+plotSubject('./woFB/ASD/*.mat', './wFB1/ASD/*.mat', './wFB2/ASD/*.mat', 'ASD-', './SubjectPlot/ASD', plotColor)
 
 %% Prepare data for correlation analysis
 [prior_td, noise_td]   = collectFit('./woFB/TD/*.mat', './wFB1/TD/*.mat', './wFB2/TD/*.mat', 25);
@@ -102,7 +115,7 @@ figure(); subplot(2, 2, 1);
 scatter(prior_td(:, 5), prior_td(:, sessionID), 40, color_td, 'filled');
 hold on;
 scatter(prior_asd(:, 5), prior_asd(:, sessionID), 40, color_asd, 'filled');
-xlabel('AQ score', 'interpreter', 'latex'); 
+xlabel('AQ score', 'interpreter', 'latex');
 ylabel('$$ \omega $$ - ``Prior"', 'interpreter', 'latex');
 
 lm = fitlm([prior_td(:, 5); prior_asd(:, 5)], [prior_td(:, sessionID); prior_asd(:, sessionID)], ...
@@ -122,7 +135,7 @@ subplot(2, 2, 3);
 scatter(prior_td(:, 6), prior_td(:, sessionID), 40, color_td, 'filled');
 hold on;
 scatter(prior_asd(:, 6), prior_asd(:, sessionID), 40, color_asd, 'filled');
-xlabel('SCQ score', 'interpreter', 'latex'); 
+xlabel('SCQ score', 'interpreter', 'latex');
 ylabel('$$ \omega $$ - ``Prior"', 'interpreter', 'latex');
 
 lm = fitlm([prior_td(:, 6); prior_asd(:, 6)], [prior_td(:, sessionID); prior_asd(:, sessionID)], ...
@@ -141,11 +154,11 @@ ylim([0, 0.75]);
 
 %% Correlation Analysis, FI after learning
 colID = 4;
-subplot(2, 2, 2); 
+subplot(2, 2, 2);
 scatter(noise_td(:, 5), noise_td(:, colID), 40, color_td, 'filled');
 hold on;
 scatter(noise_asd(:, 5), noise_asd(:, colID), 40, color_asd, 'filled');
-xlabel('AQ score', 'interpreter', 'latex'); 
+xlabel('AQ score', 'interpreter', 'latex');
 ylabel('$ \lambda $ - $ \int \sqrt{I_{F}(\theta)} d \theta $', 'interpreter', 'latex');
 
 lm = fitlm([noise_td(:, 5); noise_asd(:, 5)], [noise_td(:, colID); noise_asd(:, colID)], 'linear')
@@ -164,7 +177,7 @@ subplot(2, 2, 4);
 scatter(noise_td(:, 6), noise_td(:, colID), 40, color_td, 'filled');
 hold on;
 scatter(noise_asd(:, 6), noise_asd(:, colID), 40, color_asd, 'filled');
-xlabel('SCQ score', 'interpreter', 'latex'); 
+xlabel('SCQ score', 'interpreter', 'latex');
 ylabel('$ \lambda $ - $ \int \sqrt{I_{F}(\theta)} d \theta $', 'interpreter', 'latex');
 
 lm = fitlm([noise_td(:, 6); noise_asd(:, 6)], [noise_td(:, colID); noise_asd(:, colID)], 'linear')
@@ -317,7 +330,7 @@ loadPlot(dirWFB2, 3);
 end
 
 
-function plotSubject(dirWoFB, dirWFB1, dirWFB2, titleStr, saveBaseDir)
+function plotSubject(dirWoFB, dirWFB1, dirWFB2, titleStr, saveBaseDir, plotColor)
 
     function input = wrapOrientation(input)
         assert(sum(input > 360) == 0 && sum(input < 0) == 0);
@@ -346,15 +359,31 @@ function plotSubject(dirWoFB, dirWFB1, dirWFB2, titleStr, saveBaseDir)
             
             fig = figure(count);
             subplot(1, 3, plotOrder);
-            colors = get(gca,'colororder');
+            colors = plotColor;
             
             fitExtract(target', response', 10, true, true, true, colors(plotOrder, :));
             count = count + 1;
             
+            xticks([0, 0.5 * pi, pi, 1.5 * pi, 2 * pi]);
+            xticklabels({'0', '45', '90', '135', '180'});
+            
+            yTarget = -30 : 10 : 30;
+            yticks(yTarget / 90 * pi);
+            yticklabels(yTarget);
+            
+            if plotOrder == 1
+                title('');
+                ylabel('Bias (deg)');
+            end
+            
+            idx = extractID(file.name);
+            if plotOrder == 2                
+                title(strcat(titleStr, num2str(idx)));
+                xlabel('Target Orientation (deg)');
+            end
+            
             if plotOrder == 3
-                idx = extractID(file.name);
-                suptitle(strcat(titleStr, num2str(idx)));
-                
+                title('');
                 saveDir = fullfile(saveBaseDir, strcat(titleStr, num2str(idx)));
                 print(fig, '-bestfit', saveDir, '-dpdf');
             end
