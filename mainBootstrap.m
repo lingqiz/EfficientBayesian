@@ -70,6 +70,16 @@ nullDist = diffDist - testStat;
 std(nullDist)
 sum(abs(nullDist) > abs(testStat)) / nBootstrap
 
+%% fisher
+mean(noise_woFB_td)
+std(noise_woFB_td)
+
+mean(noise_woFB_asd)
+std(noise_woFB_asd)
+
+%% delta fisher
+
+
 %% Plot Parameter Change
 figure; subplot(1, 2, 1);
 hold on; grid on;
