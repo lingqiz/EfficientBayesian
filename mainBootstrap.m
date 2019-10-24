@@ -20,8 +20,8 @@ load('wFB1_asd.mat');
 load('wFB2_asd.mat');
 [scale_wFB2_asd, noise_wFB2_asd] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
-% Statistical Tests
 %% changes in prior, control
+% Statistical Tests
 diffDist = scale_woFB_td - scale_wFB2_td;
 testStat = mean(diffDist)
 nullStat = diffDist - testStat;
