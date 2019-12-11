@@ -102,6 +102,9 @@ plotSubject('./woFB/ASD/*.mat', './wFB1/ASD/*.mat', './wFB2/ASD/*.mat', 'ASD-', 
 [prior_asd, noise_asd] = collectFit('./woFB/ASD/*.mat', './wFB1/ASD/*.mat', './wFB2/ASD/*.mat', 17);
 
 %% Correlation Analysis, prior at end of training
+addpath('CircStat/');
+addpath('cbrewer/');
+
 load('clinicalData.mat');
 sessionID = 4;
 
