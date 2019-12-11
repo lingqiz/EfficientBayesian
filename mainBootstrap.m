@@ -20,8 +20,8 @@ load('wFB1_asd.mat');
 load('wFB2_asd.mat');
 [scale_wFB2_asd, noise_wFB2_asd] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
-% Statistical Tests
 %% changes in prior, control
+% Statistical Tests
 diffDist = scale_woFB_td - scale_wFB2_td;
 testStat = mean(diffDist)
 nullStat = diffDist - testStat;
@@ -69,6 +69,16 @@ testStat = mean(diffDist)
 nullDist = diffDist - testStat;
 std(nullDist)
 sum(abs(nullDist) > abs(testStat)) / nBootstrap
+
+%% fisher
+mean(noise_woFB_td)
+std(noise_woFB_td)
+
+mean(noise_woFB_asd)
+std(noise_woFB_asd)
+
+%% delta fisher
+
 
 %% Plot Parameter Change
 figure; subplot(1, 2, 1);
