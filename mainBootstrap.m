@@ -1,5 +1,6 @@
-%% TD Group Level
-nBootstrap = 5e3; nBins = 18; 
+%% Analysis
+% TD Group Level
+nBootstrap = 5e3; nBins = 14; 
 load('woFB_td.mat');
 [scale_woFB_td, noise_woFB_td] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
@@ -9,8 +10,8 @@ load('wFB1_td.mat');
 load('wFB2_td.mat');
 [scale_wFB2_td, noise_wFB2_td] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
-%% ASD Group Level
-nBootstrap = 5e3; nBins = 12;
+% ASD Group Level
+nBootstrap = 5e3; nBins = 14;
 load('woFB_asd.mat');
 [scale_woFB_asd, noise_woFB_asd] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
@@ -76,9 +77,6 @@ std(noise_woFB_td)
 
 mean(noise_woFB_asd)
 std(noise_woFB_asd)
-
-%% delta fisher
-
 
 %% Plot Parameter Change
 figure; subplot(1, 2, 1);
