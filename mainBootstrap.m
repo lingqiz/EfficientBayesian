@@ -1,6 +1,6 @@
 %% Analysis
 % TD Group Level
-nBootstrap = 5e3; nBins = 16; 
+nBootstrap = 5e3; nBins = 18; 
 load('woFB_td.mat');
 [scale_woFB_td, noise_woFB_td] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
