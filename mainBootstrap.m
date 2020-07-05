@@ -1,6 +1,9 @@
 %% Analysis
+addpath('./CircStat/');
+addpath('./cbrewer/');
+
 % TD Group Level
-nBootstrap = 5e3; nBins = 18; 
+nBootstrap = 1e4; nBins = 18; 
 load('woFB_td.mat');
 [scale_woFB_td, noise_woFB_td] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
@@ -11,7 +14,7 @@ load('wFB2_td.mat');
 [scale_wFB2_td, noise_wFB2_td] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
 % ASD Group Level
-nBootstrap = 5e3; nBins = 12;
+nBootstrap = 1e4; nBins = 12;
 load('woFB_asd.mat');
 [scale_woFB_asd, noise_woFB_asd] = bootstrap(allTarget', allResponse', nBootstrap, nBins);
 
@@ -34,7 +37,7 @@ diffDist = scale_woFB_asd - scale_wFB2_asd;
 testStat = mean(diffDist)
 nullStat = diffDist - testStat;
 std(nullStat)
-sum(nullStat > testStat) / nBootstrap
+sum(abs(nullStat) > testStat) / nBootstrap
 
 %% prior before feedback
 diffDist = scale_woFB_asd - scale_woFB_td;
@@ -48,7 +51,7 @@ diffStat = (scale_woFB_td - scale_wFB2_td) - (scale_woFB_asd - scale_wFB2_asd);
 testStat = mean(diffStat)
 nullStat = diffStat - testStat;
 std(nullStat)
-sum(nullStat > testStat) / nBootstrap
+sum(abs(nullStat) > testStat) / nBootstrap
 
 %% total fisher information
 diffStat = noise_woFB_td - noise_woFB_asd;
